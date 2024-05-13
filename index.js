@@ -38,6 +38,13 @@ async function run() {
       res.send(result);
     });
 
+    //Load All Query
+
+    app.get('/allqueries', async (req, res) => {
+      const result = await queriesCollction.find().toArray();
+      res.send(result);
+    });
+
     // User Query By Email
     app.get('/myqueries', async (req, res) => {
       const email = req.query.email;
@@ -51,6 +58,33 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await queriesCollction.findOne(query);
+      res.send(result);
+    });
+
+    //Update post api
+    app.patch('/myqueries/:id', async (req, res) => {
+      const id = req.params.id;
+      const details = req.body;
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedDetails = {
+        $set: {
+          productName: details.productName,
+          productBrand: details.productBrand,
+          productIMG: details.productIMG,
+          queryTitle: details.queryTitle,
+          reason: details.reason,
+        },
+      };
+      const result = await queriesCollction.updateOne(query, updatedDetails, options);
+      res.send(result);
+    });
+
+    //Delete Post API
+    app.delete('/myqueries/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const result = await queriesCollction.deleteOne(filter);
       res.send(result);
     });
 
