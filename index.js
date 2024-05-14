@@ -26,6 +26,7 @@ async function run() {
     // await client.connect();
 
     const queriesCollction = client.db('AltForum').collection('queries');
+    const recommendCollection = client.db('AltForum').collection('recommend');
 
     app.get('/', (req, res) => {
       res.send('Server is Running');
@@ -39,9 +40,8 @@ async function run() {
     });
 
     //Load All Query
-
     app.get('/allqueries', async (req, res) => {
-      const result = await queriesCollction.find().toArray();
+      const result = await queriesCollction.find().sort({ $natural: -1 }).toArray();
       res.send(result);
     });
 
@@ -59,6 +59,16 @@ async function run() {
       const query = { _id: new ObjectId(id) };
       const result = await queriesCollction.findOne(query);
       res.send(result);
+    });
+
+    //Update Recommed Count
+
+    app.patch('/updaterecommend/:id', async (req, res) => {
+      const id = req.params.id;
+      //   const query = { _id: new ObjectId(id) };
+      const result = await queriesCollction.updateOne({ _id: new ObjectId(id) }, { $inc: { recommendationCount: 1 } });
+      res.send(result);
+      console.log(id);
     });
 
     //Update post api
@@ -85,6 +95,13 @@ async function run() {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
       const result = await queriesCollction.deleteOne(filter);
+      res.send(result);
+    });
+
+    //Add Recommend API
+    app.post('/recommend', async (req, res) => {
+      const query = req.body;
+      const result = await recommendCollection.insertOne(query);
       res.send(result);
     });
 
