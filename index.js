@@ -77,10 +77,19 @@ async function run() {
       res.send(result);
     });
 
-    //Update Recommed Count
+    //Update Recommed Count  Inc
     app.patch('/updaterecommend/:id', async (req, res) => {
       const id = req.params.id;
       const result = await queriesCollction.updateOne({ _id: new ObjectId(id) }, { $inc: { recommendationCount: 1 } });
+      res.send(result);
+    });
+
+    // Update Recommend Count Dec
+    app.patch('/updaterecommend2/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const result = await queriesCollction.updateOne({ _id: new ObjectId(id) }, { $inc: { recommendationCount: -1 } });
+      console.log(filter);
       res.send(result);
     });
 
@@ -108,6 +117,14 @@ async function run() {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
       const result = await queriesCollction.deleteOne(filter);
+      res.send(result);
+    });
+
+    //Delete Recommendation api
+    app.delete('/recommend/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const result = await recommendCollection.deleteOne(filter);
       res.send(result);
     });
 
