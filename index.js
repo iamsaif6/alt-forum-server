@@ -69,6 +69,14 @@ async function run() {
       res.send(result);
     });
 
+    //Load Recommendation by User Email
+    app.get('/recommendation', async (req, res) => {
+      const email = req.query.email;
+      const filter = { recommender_email: email };
+      const result = await recommendCollection.find(filter).toArray();
+      res.send(result);
+    });
+
     //Update Recommed Count
     app.patch('/updaterecommend/:id', async (req, res) => {
       const id = req.params.id;
