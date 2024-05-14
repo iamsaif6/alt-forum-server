@@ -61,14 +61,19 @@ async function run() {
       res.send(result);
     });
 
-    //Update Recommed Count
+    //Load  All Recommendation
+    app.get('/recommendation/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { query_id: id };
+      const result = await recommendCollection.find(filter).toArray();
+      res.send(result);
+    });
 
+    //Update Recommed Count
     app.patch('/updaterecommend/:id', async (req, res) => {
       const id = req.params.id;
-      //   const query = { _id: new ObjectId(id) };
       const result = await queriesCollction.updateOne({ _id: new ObjectId(id) }, { $inc: { recommendationCount: 1 } });
       res.send(result);
-      console.log(id);
     });
 
     //Update post api
