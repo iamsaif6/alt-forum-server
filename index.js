@@ -41,14 +41,22 @@ async function run() {
 
     //Load All Query
     app.get('/allqueries', async (req, res) => {
-      const result = await queriesCollction.find().sort({ $natural: -1 }).toArray();
+      const search = req.query.search;
+      let query = {};
+      if (search) {
+        query = {
+          productName: { $regex: search, $options: 'i' },
+        };
+      }
+      const result = await queriesCollction.find(query).sort({ $natural: -1 }).toArray();
       res.send(result);
+      console.log(search);
     });
 
     // User Query By Email
     app.get('/myqueries', async (req, res) => {
       const email = req.query.email;
-      const query = { user_email: email };
+      query = { user_email: email };
       const result = await queriesCollction.find(query).toArray();
       res.send(result);
     });
@@ -69,10 +77,18 @@ async function run() {
       res.send(result);
     });
 
-    //Load Recommendation by User Email
+    //Load Recommendation by Recommender Email
     app.get('/recommendation', async (req, res) => {
       const email = req.query.email;
       const filter = { recommender_email: email };
+      const result = await recommendCollection.find(filter).toArray();
+      res.send(result);
+    });
+
+    //Load Recommendation by Recommender Email
+    app.get('/recommendation2', async (req, res) => {
+      const email = req.query.email;
+      const filter = { user_email: email };
       const result = await recommendCollection.find(filter).toArray();
       res.send(result);
     });
@@ -89,7 +105,6 @@ async function run() {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
       const result = await queriesCollction.updateOne({ _id: new ObjectId(id) }, { $inc: { recommendationCount: -1 } });
-      console.log(filter);
       res.send(result);
     });
 
