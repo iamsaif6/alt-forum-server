@@ -9,7 +9,7 @@ const port = process.env.PORT || 500;
 
 // MiddleWare
 const corsConfig = {
-  origin: ['http://localhost:5173', 'https://alt-forum.web.app'],
+  origin: ['http://localhost:5173', 'https://alt-forum.web.app', 'https://alt-forum.firebaseapp.com'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
 };
@@ -60,9 +60,9 @@ async function run() {
       res
         .cookie('token', token, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-          //   sameSite: 'none',
+          secure: false,
+          //   sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+          sameSite: 'none',
         })
         .send({ success: true });
     });
